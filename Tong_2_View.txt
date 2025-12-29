@@ -1,0 +1,211 @@
+package com.example.tuan14_ver3;
+
+import android.graphics.Color;
+import android.os.Bundle;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+
+public class MainActivity extends AppCompatActivity {
+    private TextView tvA, tvB, tvC;
+    private TextView[] tvs;
+    private Button btnSave, btnLoad;
+    private void findViews(){
+        tvA = findViewById(R.id.tvA);
+        tvB = findViewById(R.id.tvB);
+        tvC = findViewById(R.id.tvC);
+        tvs = new TextView[]{tvA, tvB, tvC};
+        btnSave = findViewById(R.id.btnSave);
+        btnLoad = findViewById(R.id.btnLoad);
+    }
+    private void addEvents(){
+        tvA.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int b = Integer.parseInt(tvB.getText().toString());
+                int c = Integer.parseInt(tvC.getText().toString());
+                int a = b + c;
+                tvA.setText(String.valueOf(a));
+                setColor(a, b, c);
+            }
+        });
+        tvB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int a = Integer.parseInt(tvA.getText().toString());
+                int c = Integer.parseInt(tvC.getText().toString());
+                int b = a + c;
+                tvB.setText(String.valueOf(b));
+                setColor(a, b, c);
+            }
+        });
+        tvC.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int b = Integer.parseInt(tvB.getText().toString());
+                int a = Integer.parseInt(tvA.getText().toString());
+                int c = a + b;
+                tvC.setText(String.valueOf(c));
+                setColor(a, b, c);
+            }
+        });
+        btnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                writeFile();
+            }
+        });
+        btnLoad.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                readFile();
+            }
+        });
+
+    }
+    // Dùng file .json để lưu trữ
+//    private void writeFile(){
+//        try{
+//            JSONObject json = new JSONObject();
+//            json.put("a", tvA.getText().toString());
+//            json.put("b", tvB.getText().toString());
+//            json.put("c", tvC.getText().toString());
+//
+//            FileOutputStream file = openFileOutput("data.json", MODE_PRIVATE);
+//            file.write(json.toString().getBytes());
+//            file.close();
+//            Toast.makeText(this, "Luu thanh cong", Toast.LENGTH_SHORT).show();
+//        }
+//        catch(Exception ex){
+//            Toast.makeText(this, "Luu that bai: " + ex.toString(), Toast.LENGTH_SHORT).show();
+//        }
+//    }
+//    private void readFile(){
+//        try{
+//            FileInputStream file = openFileInput("data.json");
+//            BufferedReader br = new BufferedReader(new InputStreamReader(file));
+//            StringBuffer sb = new StringBuffer();
+//            String line;
+//            while((line = br.readLine()) != null){
+//                sb.append(line);
+//            }
+//            JSONObject json = new JSONObject(sb.toString());
+//            int x = json.getInt("a");
+//            int y = json.getInt("b");
+//            int z = json.getInt("c");
+//
+//            tvA.setText(String.valueOf(x));
+//            tvB.setText(String.valueOf(y));
+//            tvC.setText(String.valueOf(z));
+//
+//            setColor(x, y, z);
+//            Toast.makeText(this, "Đã load trạng thái", Toast.LENGTH_SHORT).show();
+//        }
+//        catch (Exception ex){
+//            Toast.makeText(this, "Doc file that bai: " + ex.toString(), Toast.LENGTH_SHORT).show();
+//        }
+//    }
+
+    // dùng file .txt để lưu trữ
+    private void writeFile(){
+        try{
+            FileOutputStream stream = openFileOutput("data.txt", MODE_PRIVATE);
+            OutputStreamWriter write = new OutputStreamWriter(stream);
+            write.write(tvA.getText().toString() + "\n");
+            write.write(tvB.getText().toString() + "\n");
+            write.write(tvC.getText().toString() + "\n");
+            write.close();
+            stream.close();
+            Toast.makeText(this, "Luu file thanh cong", Toast.LENGTH_SHORT).show();
+        }
+        catch (Exception ex){
+            Toast.makeText(this, "Luu file that bai: " + ex.toString(), Toast.LENGTH_SHORT).show();
+        }
+    }
+    private void readFile(){
+        try{
+            FileInputStream stream = openFileInput("data.txt");
+            InputStreamReader streamReader = new InputStreamReader(stream);
+            BufferedReader reader = new BufferedReader(streamReader);
+
+            String x = reader.readLine();
+            String y = reader.readLine();
+            String z = reader.readLine();
+
+            tvA.setText(String.valueOf(x));
+            tvB.setText(String.valueOf(y));
+            tvC.setText(String.valueOf(z));
+
+            setColor(Integer.parseInt(x), Integer.parseInt(y), Integer.parseInt(z));
+
+            reader.close();
+            streamReader.close();
+            stream.close();
+            Toast.makeText(this, "Đã load trạng thái", Toast.LENGTH_SHORT).show();
+        }
+        catch (Exception ex){
+            Toast.makeText(this, "Load file that bai: " + ex.toString(), Toast.LENGTH_SHORT).show();
+        }
+    }
+    private void setColor(int a, int b, int c){
+        ArrayList<Integer> list = new ArrayList<>(Arrays.asList(a, b, c));
+        Collections.sort(list, Collections.reverseOrder());
+        for(TextView tv : tvs){
+            if(tv.getText().toString().equals(String.valueOf(list.get(0)))){
+                tv.setBackgroundColor(Color.BLUE);
+                setSize(tv, 120);
+            }
+            else if(tv.getText().toString().equals(String.valueOf(list.get(1)))){
+                tv.setBackgroundColor(Color.GREEN);
+                setSize(tv, 100);
+            }
+            else{
+                tv.setBackgroundColor(Color.RED);
+                setSize(tv, 80);
+            }
+        }
+    }
+    private void setSize(TextView tv, int size){
+        ViewGroup.LayoutParams p = tv.getLayoutParams();
+        p.width = dpToPx(size);
+        p.height = dpToPx(size);
+        tv.setLayoutParams(p);
+    }
+    private int dpToPx(int size){
+        return (int)(size * getResources().getDisplayMetrics().density);
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+        findViews();
+        addEvents();
+    }
+}
+

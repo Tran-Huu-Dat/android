@@ -1,0 +1,161 @@
+package com.example.on_tuan_08;
+
+import android.os.Bundle;
+import android.view.ContextMenu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.Spinner;
+
+import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
+import java.util.ArrayList;
+
+public class MainActivity2 extends AppCompatActivity {
+private Button btnColor, btnCurrent;
+private Spinner spinner;
+private ArrayList<String> lsHocLuc;
+private void findViews(){
+btnColor = findViewById(R.id.btnColor);
+spinner = findViewById(R.id.spinner);
+}
+
+private void prepareData(){
+lsHocLuc = new ArrayList<>();
+lsHocLuc.add("A+");
+lsHocLuc.add("A");
+lsHocLuc.add("B+");
+lsHocLuc.add("B");
+lsHocLuc.add("C+");
+lsHocLuc.add("C");
+lsHocLuc.add("D");
+lsHocLuc.add("E");
+lsHocLuc.add("F");
+}
+
+private void loadSpinner(){
+ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, lsHocLuc);
+adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+spinner.setAdapter(adapter);
+}
+
+@Override
+public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+btnCurrent = (Button) v;
+if(btnCurrent.getId() == btnColor.getId()){
+menu.add("red");
+menu.add("blue");
+menu.add("green");
+}
+super.onCreateContextMenu(menu, v, menuInfo);
+}
+
+@Override
+public boolean onContextItemSelected(@NonNull MenuItem item) {
+if(item.getTitle().equals("red")){
+btnCurrent.setBackgroundColor(getColor(R.color.red));
+}
+if(item.getTitle().equals("blue")){
+btnCurrent.setBackgroundColor(getColor(R.color.blue));
+}
+if(item.getTitle().equals("green")){
+btnCurrent.setBackgroundColor(getColor(R.color.green));
+}
+return super.onContextItemSelected(item);
+}
+
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+super.onCreate(savedInstanceState);
+EdgeToEdge.enable(this);
+setContentView(R.layout.activity_main2);
+ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+return insets;
+});
+findViews();
+registerForContextMenu(btnColor);
+prepareData();
+loadSpinner();
+}
+}
+
+
+
+
+package com.example.on_tuan_08;
+
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+
+import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultCallerLauncher;
+import androidx.activity.result.contract.ActivityResultContract;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
+public class MainActivity extends AppCompatActivity {
+private Toolbar toolbar;
+private ConstraintLayout layFrame;
+private Context context = this;
+private void findViews(){
+toolbar = findViewById(R.id.toolbar);
+layFrame = findViewById(R.id.layFrame);
+}
+
+@Override
+public boolean onCreateOptionsMenu(Menu menu) {
+getMenuInflater().inflate(R.menu.menu_item_1, menu);
+return super.onCreateOptionsMenu(menu);
+}
+
+@Override
+public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+if(item.getTitle().equals("red")){
+layFrame.setBackgroundColor(getColor(R.color.red));
+}
+if(item.getTitle().equals("blue")){
+layFrame.setBackgroundColor(getColor(R.color.blue));
+}
+if(item.getTitle().equals("green")){
+layFrame.setBackgroundColor(getColor(R.color.green));
+}
+if(item.getTitle().equals("Activity_2")){
+Intent intent = new Intent(context, MainActivity2.class);
+startActivity(intent);
+}
+return super.onOptionsItemSelected(item);
+}
+
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+super.onCreate(savedInstanceState);
+EdgeToEdge.enable(this);
+setContentView(R.layout.activity_main);
+ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+return insets;
+});
+findViews();
+setSupportActionBar(toolbar);
+}
+}
